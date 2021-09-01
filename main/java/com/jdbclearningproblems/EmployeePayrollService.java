@@ -1,4 +1,5 @@
 package com.jdbclearningproblems;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -41,6 +42,15 @@ public class EmployeePayrollService {
         employeePayrollList.add(new EmployeePayrollData(id, name, salary));
         consoleInputReader.close();
     }
+
+
+    public List<EmployeePayrollData> readEmployeePayrollForDateChange(IOService ioService, LocalDate startDate, LocalDate endDate) {
+        if(ioService.equals(IOService.DB_IO))
+            return  employeePayrollDBService.getEmployeePayrollForDateRange(startDate,endDate);
+        return null;
+
+    }
+
 
     public List<EmployeePayrollData> readEmployeePayrollData(IOService ioService) {
         if (ioService.equals(IOService.DB_IO))
