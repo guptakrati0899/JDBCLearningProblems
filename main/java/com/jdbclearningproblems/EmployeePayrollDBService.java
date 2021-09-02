@@ -53,6 +53,26 @@ public class EmployeePayrollDBService {
         return 0;
     }
 
+    public EmployeePayrollData addEmployeeToPayroll(String name, String gender, double salary, LocalDate startDate) {
+        int id = -1;
+        EmployeePayrollData employeePayrollData = null;
+        String sql = String.format("INSERT INTO employee_payroll(name , gender, salary,start)" + "VALUES('%s','%s','%f','%s')",name,gender,salary,Date.valueOf(startDate));
+        try (Connection connection = this.getConnection()) {
+            Statement statement = connection.createStatement();
+            int rowAffected = statement.executeUpdate(sql, statement.RETURN_GENERATED_KEYS);
+            if (rowAffected == 1) {
+                ResultSet resultSet = statement.getGeneratedKeys();
+                if (resultSet.next()) id = resultSet.getInt(1);
+            }
+            employeePayrollData = new EmployeePayrollData(id, name, salary, startDate);
+        }catch (SQLException e){
+            e.printStackTrace();
+            }
+        return employeePayrollData;
+
+    }
+
+
     public List<EmployeePayrollData> getEmployeePayrollData(String name) {
         List<EmployeePayrollData> employeePayrollDataList = null;
         if (this.employeePayrollDataStatement == null)
@@ -106,7 +126,7 @@ public class EmployeePayrollDBService {
 
     public Map<String, Double> getAverageSalaryByGender() {
         String sql = "Select gender ,AVG(salary) as avg_salary FROM employee_payroll GROUP BY gender;";
-        Map<String,Double> genderToAverageSalaryMap = new HashMap<>();
+        Map<String, Double> genderToAverageSalaryMap = new HashMap<>();
         try (Connection connection = this.getConnection()) {
             Statement statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery(sql);
@@ -115,15 +135,11 @@ public class EmployeePayrollDBService {
                 double salary = resultSet.getDouble("avg_salary");
                 genderToAverageSalaryMap.put(gender, salary);
             }
-        }catch (SQLException e) {
-                e.printStackTrace();
-            }
-            return genderToAverageSalaryMap;
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-
-
-
-
+        return genderToAverageSalaryMap;
+    }
 
 
     private void prepareStatementForEmployeeData() {
@@ -137,5 +153,7 @@ public class EmployeePayrollDBService {
         }
     }
 }
+
+
 
 

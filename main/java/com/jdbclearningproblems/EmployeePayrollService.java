@@ -94,6 +94,10 @@ public class EmployeePayrollService {
             new EmployeePayrollFileService().writeData(employeePayrollList);
     }
 
+    public void addEmployeeToPayrollData(String name, String gender, double salary, LocalDate startDate) {
+        employeePayrollList.add(employeePayrollDBService.addEmployeeToPayroll(name,gender,salary,startDate));
+    }
+
     public void printData(IOService ioService) {
         if (ioService.equals(IOService.FILE_IO))
             new EmployeePayrollFileService().printData();
